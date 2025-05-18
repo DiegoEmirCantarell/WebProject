@@ -1,0 +1,77 @@
+<div class="registro-container">
+  <h2>Crear una cuenta</h2>
+  
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" formControlName="nombre" class="form-control">
+      <div class="error-message" *ngIf="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched">
+        El nombre es requerido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="apellido">Apellido</label>
+      <input type="text" id="apellido" formControlName="apellido" class="form-control">
+      <div class="error-message" *ngIf="registroForm.get('apellido')?.invalid && registroForm.get('apellido')?.touched">
+        El apellido es requerido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" formControlName="email" class="form-control">
+      <div class="error-message" *ngIf="registroForm.get('email')?.invalid && registroForm.get('email')?.touched">
+        Ingrese un email válido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" formControlName="password" class="form-control">
+      <div class="error-message" *ngIf="registroForm.get('password')?.invalid && registroForm.get('password')?.touched">
+        La contraseña debe tener al menos 6 caracteres
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmarPassword">Confirmar Contraseña</label>
+      <input type="password" id="confirmarPassword" formControlName="confirmarPassword" class="form-control">
+      <div class="error-message" *ngIf="registroForm.hasError('mismatch') && registroForm.get('confirmarPassword')?.touched">
+        Las contraseñas no coinciden
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="role">Tipo de cuenta</label>
+      <select id="role" formControlName="role" class="form-control">
+        <option *ngFor="let rol of roles" [value]="rol.value">{{ rol.label }}</option>
+      </select>
+    </div>
+
+    <!-- Campo de código de administrador -->
+    <div class="form-group" *ngIf="mostrarCodigoAdmin">
+      <label for="codigoAdmin">Código de Administrador</label>
+      <input type="password" id="codigoAdmin" formControlName="codigoAdmin" class="form-control">
+      <div class="error-message" *ngIf="registroForm.get('codigoAdmin')?.invalid && registroForm.get('codigoAdmin')?.touched">
+        El código de administrador es requerido
+      </div>
+      <div class="info-message">
+        Se requiere un código para crear una cuenta de administrador
+      </div>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="registroForm.invalid || loading">
+      <span *ngIf="loading">Procesando...</span>
+      <span *ngIf="!loading">Registrarse</span>
+    </button>
+  </form>
+
+  <div class="login-link">
+    ¿Ya tienes una cuenta? <a [routerLink]="['/login']">Inicia sesión</a>
+  </div>
+</div> 
