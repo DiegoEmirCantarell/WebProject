@@ -16,12 +16,17 @@
 }
 
 .btn-primary {
-  background-color: #4a86e8;
+  background-color: var(--primary-color); /* Café oscuro */
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
   text-decoration: none;
   display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-color); /* Color chocolate al hover */
 }
 
 .btn-secondary {
@@ -110,12 +115,17 @@
 }
 
 .btn-edit {
-  background-color: #4a86e8;
+  background-color: var(--primary-color); /* Café oscuro */
   color: white;
   padding: 6px 12px;
   border-radius: 4px;
   text-decoration: none;
   font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-edit:hover {
+  background-color: var(--accent-color); /* Color chocolate al hover */
 }
 
 .btn-delete {
