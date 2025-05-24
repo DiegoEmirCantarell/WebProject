@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
+import { SocialMediaService } from '../../services/social-media.service';
 import { Producto, CreateProductoDTO } from '../../models/producto.model';
 
 @Component({
@@ -33,7 +34,8 @@ export class CrearProductoComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private productoService: ProductoService
+    private productoService: ProductoService,
+    private socialMediaService: SocialMediaService
   ) {
     this.productoForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -82,6 +84,20 @@ export class CrearProductoComponent implements OnInit {
       });
   }
 
+  private publicarEnX(producto: CreateProductoDTO): void {
+    const mensaje = `¡Nuevo producto disponible! ${producto.name} a $${producto.price}. Visita nuestra tienda para más detalles. #NuevoProducto #Ecommerce`;
+    
+    this.socialMediaService.postToX(mensaje)
+      .subscribe({
+        next: (response) => {
+          console.log('Publicado exitosamente en X:', response);
+        },
+        error: (err) => {
+          console.error('Error al publicar en X:', err);
+        }
+      });
+  }
+
   onSubmit(): void {
     if (this.productoForm.valid) {
       this.loading = true;
@@ -105,6 +121,7 @@ export class CrearProductoComponent implements OnInit {
         this.productoService.crearProducto(productoData)
           .subscribe({
             next: () => {
+              this.publicarEnX(productoData); // Publicar en X cuando se crea el producto
               this.router.navigate(['/mis-productos']);
             },
             error: (err) => {

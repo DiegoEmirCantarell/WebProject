@@ -69,5 +69,30 @@
         </div>
       </div>
     </div>
+
+    <!-- Agregar después de la información del producto principal -->
+    <div class="comparacion-productos">
+      <h3>Comparación con Amazon</h3>
+      
+      <div *ngIf="isLoading" class="loading">
+        <p>Cargando comparaciones...</p>
+      </div>
+
+      <div *ngIf="errorComparison" class="error-message">
+        {{ errorComparison }}
+      </div>
+
+      <div *ngIf="!isLoading && !errorComparison && amazonProducts.length > 0" class="productos-amazon">
+        <div *ngFor="let producto of amazonProducts" class="producto-amazon">
+          <img [src]="producto.image" [alt]="producto.title">
+          <h4>{{ producto.title }}</h4>
+          <p class="precio">{{ producto.price }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && !errorComparison && amazonProducts.length === 0" class="no-results">
+        <p>No se encontraron productos similares en Amazon</p>
+      </div>
+    </div>
   </div>
-</div> 
+</div>

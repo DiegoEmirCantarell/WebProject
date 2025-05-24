@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 import { CommonModule } from '@angular/common';
 import { Producto } from '../../models/producto.model';
 import { CarritoService } from '../../services/carrito.service';
+import { ProductComparisonService, AmazonProduct } from '../../services/product-comparison.service';
 
 @Component({
   selector: 'app-detalle-producto-modal',
@@ -18,14 +19,22 @@ export class DetalleProductoModalComponent implements OnChanges {
   mensaje: string = '';
   tipoMensaje: 'success' | 'error' | '' = '';
   cantidad: number = 1;
+  amazonProducts: AmazonProduct[] = [];
+  isLoading: boolean = false;
+  errorComparison: string = '';
 
-  constructor(private carritoService: CarritoService) {}
+  constructor(
+    private carritoService: CarritoService,
+    private productComparisonService: ProductComparisonService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['producto'] && changes['producto'].currentValue) {
       console.log('Modal: Producto recibido en el modal:', this.producto);
       // Resetear la cantidad cuando cambia el producto
       this.cantidad = 1;
+      // Cargar comparación de productos cuando se abre un nuevo producto
+      this.compararConAmazon();
     }
     if (changes['visible']) {
       console.log('Modal: Visibilidad cambiada a:', this.visible);
@@ -76,6 +85,31 @@ export class DetalleProductoModalComponent implements OnChanges {
     }
   }
 
+  // Obtener comparación de precios en Amazon
+  private compararConAmazon(): void {
+    if (!this.producto) return;
+
+    this.isLoading = true;
+    this.errorComparison = '';
+    this.amazonProducts = [];
+
+    console.log('Iniciando comparación con Amazon para:', this.producto.name);
+
+    this.productComparisonService.compareWithAmazon(this.producto.name)
+      .subscribe({
+        next: (products) => {
+          console.log('Productos encontrados en Amazon:', products);
+          this.amazonProducts = products;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error al comparar productos en Amazon:', error);
+          this.errorComparison = 'No se pudieron cargar las comparaciones de productos';
+          this.isLoading = false;
+        }
+      });
+  }
+
   // Mostrar un mensaje temporal
   private mostrarMensaje(mensaje: string, tipo: 'success' | 'error'): void {
     this.mensaje = mensaje;
@@ -97,9 +131,6 @@ export class DetalleProductoModalComponent implements OnChanges {
       if (url.includes('i.ibb.co')) {
         return url;
       }
-      
-      // Si es una URL de visualización de ImgBB (como https://ibb.co/XkZ1t5dw)
-      // intentamos extraer el ID y formar una URL directa de prueba
       const idMatch = url.match(/ibb\.co\/([A-Za-z0-9]+)/);
       if (idMatch && idMatch[1]) {
         // Intentamos una URL directa con el ID extraído
@@ -109,4 +140,4 @@ export class DetalleProductoModalComponent implements OnChanges {
     
     return url;
   }
-} 
+}
